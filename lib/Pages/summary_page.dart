@@ -19,7 +19,7 @@ class SummaryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quiz Summary'),
+        title: const Text('Quiz Summary'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,10 +28,10 @@ class SummaryScreen extends StatelessWidget {
           children: [
             Text(
               'Your Score: $score/$totalQuestions',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 24),
+            const Text(
               'Answers:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -40,21 +40,31 @@ class SummaryScreen extends StatelessWidget {
                 itemCount: questions.length,
                 itemBuilder: (context, index) {
                   final question = questions[index];
+
+                  // Check if the user answered the question
                   final userAnswerIndex = userAnswers[index];
-                  final isCorrect = userAnswerIndex != null &&
-                      question.options[userAnswerIndex].isCorrect;
+                  final isValidAnswer = userAnswerIndex != null &&
+                      userAnswerIndex >= 0 &&
+                      userAnswerIndex < question.options.length;
+
+                  final userAnswer =
+                      isValidAnswer ? question.options[userAnswerIndex] : null;
+
+                  final isCorrect = userAnswer != null && userAnswer.isCorrect;
 
                   return ListTile(
                     title: Text(question.description),
                     subtitle: Text(
-                      'Your Answer: ${userAnswerIndex != null ? question.options[userAnswerIndex].description : "No Answer"}',
+                      userAnswer != null
+                          ? 'Your Answer: ${userAnswer.description}'
+                          : 'No Answer',
                       style: TextStyle(
                         color: isCorrect ? Colors.green : Colors.red,
                       ),
                     ),
                     trailing: isCorrect
-                        ? Icon(Icons.check, color: Colors.green)
-                        : Icon(Icons.close, color: Colors.red),
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : const Icon(Icons.close, color: Colors.red),
                   );
                 },
               ),
